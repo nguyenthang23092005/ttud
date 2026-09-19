@@ -1,0 +1,14 @@
+# Complete planned runtime stack. XGBoost remains optional because Random Forest
+# is the required tree baseline and XGBoost wheels are platform-dependent.
+networkx>=3.4,<3.7
+osmnx>=2.1,<2.2
+numpy>=2.0,<3
+pandas>=2.2,<3
+scikit-learn>=1.6,<2
+joblib>=1.4,<2
+streamlit>=1.41,<2
+folium>=0.19,<0.21
+streamlit-folium>=0.24,<0.27
+plotly>=5.24,<7
+matplotlib>=3.9,<4
+
