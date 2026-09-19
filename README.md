@@ -1,9 +1,10 @@
 # Dynamic Vietnam Routing
 
 Research-oriented route planning on real Vietnamese OpenStreetMap networks. The project is
-being delivered in correctness-gated phases; **Phase 1 is complete**: centralized config,
-real OSM Hanoi graph acquisition, car/motorbike profiles, validation, and deterministic
-local caching. Routing, traffic AI, simulation, experiments, and UI are subsequent phases.
+being delivered in correctness-gated phases. Phase 1 provides centralized config, real OSM
+graph acquisition, validation, and deterministic caching. A working vertical slice now adds
+an exact Dijkstra implementation plus a Streamlit/Folium click-to-route map. Traffic AI,
+dynamic simulation, comparative algorithms, and experiments remain subsequent phases.
 
 The design and mathematical correctness boundaries are in
 [`docs/architecture.md`](docs/architecture.md), with engineering risks in
@@ -51,18 +52,27 @@ python -m pytest
 python -m ruff check app scripts tests
 ```
 
+Run the interactive route map:
+
+```bash
+streamlit run app/main.py
+```
+
+Click once in `Start` mode and once in `Destination` mode. The selected coordinates are
+snapped to OSM road nodes, then the exact keyed route edges are drawn on the map.
+
 ## Repository layout
 
 ```text
 app/
   config.py
   graph/                 # Phase 1: OSM loading, GraphML cache, validation
-  algorithms/            # Phase 2 onward
+  algorithms/            # Shared API and Dijkstra vertical slice
   traffic/               # Phase 5 onward
   ai/                    # Phase 7 onward
   simulation/            # Phase 8 onward
   benchmark/             # Phase 10 onward
-  ui/                    # Phase 9 onward
+  ui/                    # Folium route rendering vertical slice
 data/{graph,traffic,benchmark}/
 docs/
 models/
@@ -84,4 +94,4 @@ experiments; final validation/reporting.
 - OSM data quality and completeness vary; inferred speeds are not measured traffic speeds.
 - Large administrative boundaries can stress Overpass. A smaller district/place query is a
   valid development fallback, while final experiments should pin and report the graph cache.
-- The project currently provides acquisition infrastructure, not yet route computation.
+- Only Dijkstra is connected to the current UI; comparative and dynamic algorithms follow.

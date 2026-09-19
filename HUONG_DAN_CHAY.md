@@ -1,8 +1,8 @@
 # Hướng dẫn cài đặt, chạy và kiểm thử
 
-Tài liệu này áp dụng cho trạng thái hiện tại của project: **PHASE 1** gồm cấu hình,
-tải mạng đường OpenStreetMap, chuẩn hóa thuộc tính và cache graph. Các lệnh UI, AI và
-routing chưa được liệt kê vì các phase tương ứng chưa được triển khai.
+Tài liệu này áp dụng cho trạng thái hiện tại của project: tải/cache mạng đường OSM và
+vertical slice Dijkstra + Streamlit/Folium để chọn hai điểm rồi hiển thị đường đi. Traffic
+AI và các thuật toán so sánh còn lại sẽ được bổ sung ở các phase sau.
 
 ## 1. Yêu cầu hệ thống
 
@@ -57,6 +57,12 @@ Nếu không kích hoạt virtual environment:
 ```powershell
 python -m pip install -r requirements-dev.txt
 python -m pip install -e . --no-deps
+```
+
+Để chạy giao diện hiện tại, cần nhóm dependency `research`:
+
+```powershell
+python -m pip install -e ".[research,dev]"
 ```
 
 ## 3. Cài đặt trên macOS/Linux
@@ -118,7 +124,27 @@ Weakly connected components: 1
 
 Chạy lại cùng lệnh sẽ đọc file GraphML trong `data/graph` thay vì tải lại.
 
-## 6. Tải graph Hà Nội
+## 6. Hiển thị đường đi trên bản đồ
+
+Khởi động giao diện:
+
+```powershell
+python -m streamlit run app/main.py
+```
+
+Sau khi trình duyệt mở:
+
+1. Nhập `Hoan Kiem District, Hanoi, Vietnam` để demo nhanh, hoặc `Hanoi, Vietnam`.
+2. Chọn `car` hoặc `motorbike`.
+3. Nhấn **Tải / mở graph**.
+4. Chọn chế độ **Start**, sau đó click điểm xuất phát trên bản đồ.
+5. Chọn chế độ **Destination**, sau đó click điểm đến.
+6. Tuyến Dijkstra màu xanh sẽ tự xuất hiện cùng quãng đường, ETA, runtime và số node mở rộng.
+
+Hai tọa độ click được snap vào node đường gần nhất. Route sử dụng đúng directed edge và
+edge key của OSM, vì vậy không làm mất one-way hay parallel edges.
+
+## 7. Tải graph Hà Nội
 
 Sử dụng cấu hình trong `.env`:
 
@@ -143,7 +169,7 @@ Ranh giới hành chính toàn Hà Nội tạo truy vấn Overpass lớn và có
 timeout. Khi phát triển, dùng một quận của Hà Nội là cách kiểm tra hợp lý. Graph motorbike
 là best-effort theo OSM tags, không phải cam kết đầy đủ về hạn chế giao thông pháp lý.
 
-## 7. Chạy kiểm thử
+## 8. Chạy kiểm thử
 
 Unit tests:
 
@@ -183,7 +209,7 @@ python -m compileall -q app scripts tests
 Nếu không kích hoạt virtual environment, thay `python` bằng
 `.\.venv\Scripts\python.exe` trong các lệnh trên.
 
-## 8. Dữ liệu được tạo ở đâu?
+## 9. Dữ liệu được tạo ở đâu?
 
 - Graph đã chuẩn hóa: `data/graph/*.graphml`.
 - Metadata của graph: `data/graph/*.json`.
@@ -192,7 +218,7 @@ Nếu không kích hoạt virtual environment, thay `python` bằng
 Các file này không được commit. Cache key phụ thuộc vào địa điểm, vehicle profile và các
 tham số tạo graph, giúp tránh dùng nhầm graph giữa hai cấu hình.
 
-## 9. Xử lý lỗi thường gặp
+## 10. Xử lý lỗi thường gặp
 
 ### `ModuleNotFoundError: No module named 'osmnx'`
 
@@ -220,4 +246,3 @@ activate môi trường.
 python -c "import sys; print(sys.executable)"
 python -c "import osmnx; print(osmnx.__version__)"
 ```
-
